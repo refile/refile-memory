@@ -6,6 +6,8 @@ module Refile
     class Backend
       attr_reader :directory
 
+      attr_reader :max_size
+
       def initialize(max_size: nil, hasher: Refile::RandomHasher.new)
         @hasher = hasher
         @max_size = max_size
