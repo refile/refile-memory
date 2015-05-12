@@ -4,6 +4,7 @@ require "refile/memory/version"
 module Refile
   module Memory
     class Backend
+      extend Refile::BackendMacros
       attr_reader :directory
 
       attr_reader :max_size
@@ -14,9 +15,7 @@ module Refile
         @store = {}
       end
 
-      def upload(uploadable)
-        Refile.verify_uploadable(uploadable, @max_size)
-
+      verify_uploadable def upload(uploadable)
         id = @hasher.hash(uploadable)
 
         @store[id] = uploadable.read
@@ -24,27 +23,27 @@ module Refile
         Refile::File.new(self, id)
       end
 
-      def get(id)
+      verify_id def get(id)
         Refile::File.new(self, id)
       end
 
-      def delete(id)
+      verify_id def delete(id)
         @store.delete(id)
       end
 
-      def open(id)
+      verify_id def open(id)
         StringIO.new(@store[id])
       end
 
-      def read(id)
+      verify_id def read(id)
         @store[id]
       end
 
-      def size(id)
+      verify_id def size(id)
         @store[id].bytesize if exists?(id)
       end
 
-      def exists?(id)
+      verify_id def exists?(id)
         @store.has_key?(id)
       end
 
